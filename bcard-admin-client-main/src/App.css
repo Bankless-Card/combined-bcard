@@ -1,0 +1,87 @@
+
+.header {
+  width: 100%;
+  padding: 2%;
+  background-color: burlywood;
+  color: white;
+  text-align: center;
+}
+
+.display-board {
+  width: 100%;
+  background-color: rgb(555, 200, 789);
+  padding: 20px;
+  border-radius: 0 0 10px 10px;
+}
+
+.current-user {
+  background-color: lightblue;
+  padding: 5%;
+}
+
+.new-user {
+  background-color: lightyellow;
+  padding-bottom: 10px;
+}
+
+.number {
+  color: red;
+  font-size: 48px;
+  text-align: center;
+}
+
+.mrgnbtm {
+  margin-top: 20px;
+}
+
+.priceBoxes {
+  background-color: white;    /* rgb(214,51,132, 0.1); PINK */
+}
+
+.priceBoxes .col {
+  background-color: rgba(112,44,249,.1);    /* rgba(255,228,132,1); */
+  border: 3px solid rgba(112,44,249,0.25);
+  border-width: 2px 2px 2px 3px;
+}
+
+.priceBoxes .col.top {
+  border-radius: 10px 10px 0 0;
+}
+
+.tsForm, .trForm {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.tsForm h5, .trForm h5 {
+  font-weight: 700;
+  font-style: italic;
+  border-bottom: 2px solid blue;
+}
+
+#selectBS, #sel-cur, #tradeAmount, #currencyOut, #currencyIn {
+  width: 90%;
+}
+
+#tradePrice {
+  width: 70%;
+}
+
+#tradeSubmit {
+  float: right;
+}
+
+.qrContainer {
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px auto;
+  text-align: center;
+}
+
+.qrContainer img {
+  background: white;
+  padding: 5px;
+  border-radius: 5px;
+}
