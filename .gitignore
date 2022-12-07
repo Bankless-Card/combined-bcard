@@ -1,0 +1,4 @@
+
+.env
+node_modules/*
+Bcard-admin-client-main/node_modules/*
