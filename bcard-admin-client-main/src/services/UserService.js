@@ -241,20 +241,15 @@ export async function newWalletAddress(id) {
 }
 
 export async function walletAddressInfo(id) {
-    console.log(id);
+    console.log("Get Info Modal for Account with Id: " + id);
 
 
-    if(id === "accountId") {
+    if(id === "accountId" || id === "") {
         // default account id is for BCARD_FEES BTC account with id: 636bb54f5f95f8f981cbc519
         id = "636bb54f5f95f8f981cbc519";
     }
 
     const response = await fetch('/api/ledger/account/'+ id );
-
-    // let jsr = response.json();
-        console.log("Implement QR output here...");
-
-
     console.log(response);
     return await response.json();
 }

@@ -61,7 +61,7 @@ function PriceBar(props) {
 }
 
 
-export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getBalance, getCustomers, createTrade, showTrades, newBTCMaster, newBTCAccount, newWalletAddress, getEthAddress, walletAddressInfo, newWalletKey, newUSDWallet, newETHWallet, onboardExecute, newXpubAccount}) => {
+export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMaster, getBalance, getCustomers, createTrade, showTrades, newBTCMaster, newBTCAccount, newWalletAddress, getEthAddress, walletAddressInfo, newWalletKey, newUSDWallet, newETHWallet, onboardExecute, newXpubAccount}) => {
 
         const ref = useRef(null);
 
@@ -151,7 +151,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getBal
                                 <button 
                                     type="button" 
                                     style={{marginLeft: spacing + "px"}} 
-                                    onClick={ (e) => getAccount(state.custId) } 
+                                    onClick={ (e) => getMaster(state.custId) } 
                                     className="btn btn-warning">
                                         Refresh Accounts
                                 </button>

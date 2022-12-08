@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const CreateUser = ({onChangeForm, createNewUser, loginUser, user }) => {
+const CreateUser = ({onChangeForm, createNewUser, loginUser, user, signInWithPhoneNumber }) => {
 
 
     return(
@@ -17,16 +17,18 @@ const CreateUser = ({onChangeForm, createNewUser, loginUser, user }) => {
                         </div>
                         <div className="form-group col-md-12">
                             <label htmlFor="exampleInputEmail1">Email</label>
-                            <input type="text" onChange={(e) => onChangeForm(e)} className="form-control" name="email" id="email" aria-describedby="emailHelp" placeholder="Email" />
+                            <input type="text" onChange={(e) => onChangeForm(e)} className="form-control" name="email" id="email" autoComplete="current-email" aria-describedby="emailHelp" placeholder="Email" />
                         </div>
                         <div className="form-group col-md-12">
                             <label htmlFor="exampleInputPassword1">Password</label>
-                            <input type="password" onChange={(e) => onChangeForm(e)} className="form-control" name="password" id="password" placeholder="Password" />
+                            <input type="password" onChange={(e) => onChangeForm(e)} className="form-control" name="password" id="password" autoComplete="current-password" placeholder="Password" />
                         </div>
                     </div>
                     <button type="button" onClick= {(e) => createNewUser(e)} className="btn btn-danger">Create New</button>
 
-                    <button type="button" style={{marginLeft:"5px"}} onClick= {(e) => loginUser()} className="btn btn-warning">Login</button>
+                    <button id="" type="button" style={{marginLeft:"5px"}} onClick= {(e) => loginUser()} className="btn btn-warning">Login</button>
+
+                    <button id="sign-in-button" type="button" style={{marginLeft:"5px"}} onClick= {(e) => signInWithPhoneNumber()} className="btn btn-warning">Phone Login</button>
                 </form>
                 </div>
             </div>

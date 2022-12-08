@@ -75,7 +75,7 @@ class User {
 
             
 
-            console.log(req.params.base, prices.base)
+            // console.log(req.params.base, prices.base)
 
             console.log("FUTURE IMPLEMENTAION: LIST OF INPUTS AND BASE, THEN LOOP");
             
@@ -84,7 +84,7 @@ class User {
                 headers: tatumHeaders
             })
             .then((response:any) => {
-                console.log(response.data);     // this shows the correctly retrieved data in the server console
+                // console.log(response.data);     // this shows the correctly retrieved data in the server console
                 prices.eth = response.data.value;
                 prices.time = response.data.timestamp;
 
@@ -93,7 +93,7 @@ class User {
                     headers: tatumHeaders
                 })
                 .then((response:any) => {
-                    console.log(response.data);     // this shows the correctly retrieved data in the server console
+                    //console.log(response.data);     // this shows the correctly retrieved data in the server console
                     prices.usd = response.data.value;
                     if(response.data.timestamp > prices.time) prices.time = response.data.timestamp;
 
@@ -103,7 +103,7 @@ class User {
                         headers: tatumHeaders
                     })
                     .then((response:any) => {
-                        console.log(response.data);     // this shows the correctly retrieved data in the server console
+                        // console.log(response.data);     // this shows the correctly retrieved data in the server console
                         prices.chf = response.data.value;
                         if(response.data.timestamp > prices.time) prices.time = response.data.timestamp;
 
@@ -112,7 +112,7 @@ class User {
                             headers: tatumHeaders
                         })
                         .then((response:any) => {
-                            console.log(response.data);     // this shows the correctly retrieved data in the server console
+                            // console.log(response.data);     // this shows the correctly retrieved data in the server console
                             prices.btc = response.data.value;
                             if(response.data.timestamp > prices.time) prices.time = response.data.timestamp;
 
@@ -132,7 +132,7 @@ class User {
                             headers: coinGeckoHeaders
                             })
                             .then((response:any) => {
-                                console.log(response.data);     // this shows the correctly retrieved data in the server console
+                                // console.log(response.data);     // this shows the correctly retrieved data in the server console
 
                                 if(prices.base === "USD"){
                                     prices.bank = response.data['bankless-dao'].usd.toString();
@@ -313,7 +313,7 @@ class User {
         this.express.post("/transfer", (req, res, next) => {
             this.logger.info("url:::::::" + req.url);
 
-            console.log(req.body);      // looking for . transfer item attached
+            // console.log(req.body);      // looking for . transfer item attached
 
             axios.post(TATUM_API_URL + 'ledger/transaction',  req.body, {
                 headers: tatumHeadersPost,
@@ -324,6 +324,8 @@ class User {
             })
             .catch((error:any) => {
                 console.log(error);
+                // console.log(res)
+                res.send(error)
             });
         });
 

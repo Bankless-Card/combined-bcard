@@ -10,7 +10,7 @@ const feesAcctUSD = feesAccts.USD;
 const feesAcctETH = feesAccts.ETH;
 const feesAcctBANK = feesAccts.BANK;
 
-console.log(feesAccts)
+// console.log(feesAccts)
 
 async function createTrade(type, currency, amount, price, acct1, acct2, base){
 

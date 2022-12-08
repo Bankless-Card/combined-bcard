@@ -23,6 +23,8 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
 
 export const auth = getAuth(app);
+auth.languageCode = 'en';// firebase.auth().useDeviceLanguage;    // for reCAPTCHA
+
 export default firebase;
 
 export const signInWithGoogle = async () => {
@@ -43,6 +45,38 @@ export const signInWithGoogle = async () => {
     alert(err.message);
   }
 };
+
+export const signInWithPhoneNumber = async (auth, phoneNumber, appVerifier) => {
+
+  await signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+    .then((confirmationResult) => {
+      // SMS Sent.Prompt usser to type the code from the message, then sign in user with confirmationResult.confirm(code).
+      window.confirmationResult = confirmationResult;
+      // .. 
+    }).catch((error) => {
+      // Error; SMS not sent
+      //...
+    });
+
+};
+
+  // try {
+    // const res = await auth.signInWithPopup(provider);
+    // const user = res.user;
+    // const userRef = collection(db, "users");
+    // const result = await getDocs(query(userRef, where("uid", "==", user.uid)));
+    // if (result.empty) {
+    //   await addDoc(collection(db, "users"), {
+    //     uid: user.uid,
+    //     name: user.displayName,
+    //     authProvider: "google",
+    //     email: user.email,
+    //   });
+    // }
+  // } catch (err) {
+    // alert(err.message);
+  // }
+// };
 
 export const signInWithEAndP = async (email, password) => {
 

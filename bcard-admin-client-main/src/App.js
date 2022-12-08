@@ -30,11 +30,12 @@ import { convertToCAD } from './utils/convertToCAD'
 // import Login from './components/LoginPage';
 // import Home from './components/HomePage';
 
-import { signInWithEAndP, createUserWithEAndP, logout } from './services/firebase'    // packaged services
+import { signInWithEAndP, createUserWithEAndP, logout, 
+      signInWithPhoneNumber } from './services/firebase'    // packaged services
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
 // // import { getAnalytics } from "firebase/analytics";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, RecaptchaVerifier } from "firebase/auth";
 
 // function triggerShowTrades() {
 //   // update display of ACTIVE trades in UI after account is loaded
@@ -158,6 +159,7 @@ class App extends Component {
     account_list: [],   // list of customer accounts
     hasDAO: false,      // does customer have a DAO Account (BANK)
     hasVISA: false,     // doess custoemr have a VISA (USDC) Account
+    recipients: [],     // storage of a list of users customer can send to 
 
     buyOrders: [],      // open buy orders on tradeBook
     sellOrders: [],     // open sell orders on tradeBook
@@ -193,6 +195,15 @@ class App extends Component {
     // determine authentication status
     const auth = getAuth();
     // console.log(auth);
+    window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+      'size': 'invisible',
+      'callback': (response) => {
+        // reCAPTCHA Solve, allow sign in with phone Number
+        console.log( "onSignInSubmit()" );
+        this.loginUser();       // login execute after verification
+                              // disconnect submit?
+      }
+    }, auth);
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -205,7 +216,7 @@ class App extends Component {
         // console.log(user.email);
         //  console.log(user);    // user object is the storage for Google Auth
 
-        console.log("Welcome back " + user.email);
+        // console.log("Welcome back " + user.email);
 
         this.setState({ signedIn: true });
         this.setState({ user: user });
@@ -282,6 +293,50 @@ class App extends Component {
 
           // may need to seState for user object
           this.setState({"signedIn": true});
+
+          console.log("Request refresh due to state here.");
+        }
+    });
+  }
+
+  signInWithPhoneNumber = () => {
+    // hard code for now
+    // let email='tom@tranmer.ca';
+    // let password = '123456';
+
+    // console.log(this.state.user)
+
+    // console.log(this.state.user.email,this.state.user.password);
+
+    const auth = getAuth();
+    console.log(auth);
+
+    let phoneNo = "16478989204";    // hard code TOM
+    let appVerifier = window.recaptchaVerifier;
+
+    signInWithPhoneNumber(auth,phoneNo,appVerifier)
+      .then(response => {
+
+        console.log(response)    
+
+
+        // get user object from auth
+        // console.log(this.state.user.uid);
+
+        // set state for default currencyBase
+        //  this.setState({ baseCurrency: "USD" });   // defualt USD hard-codedhere
+        // console.log("default USD hard-coded here on login");
+
+
+
+
+        // console.log(response);
+        if(response) {
+          // this to get user email -> use HASH of email for creation of new accounts belonging to this user. 
+          // this.setState({numberOfUsers: this.state.numberOfUsers + 1})
+
+          // may need to seState for user object
+          // this.setState({"signedIn": true});
 
           console.log("Request refresh due to state here.");
         }
@@ -590,7 +645,7 @@ class App extends Component {
   getAccount = (custId) => {
 
     console.log("Running getAccount - rename this function");
-    console.log(custId);
+    // console.log(custId);
 
     let useAcct = custId;   // default is the passed value
     if(custId === "") {
@@ -678,6 +733,118 @@ class App extends Component {
 
   }
 
+  // rename getAccount method here to getMaster
+  getMaster = (custId) => {
+
+    console.log("Running getMaster - new name for this getAccount method");
+    // console.log(custId);
+
+    let useAcct = custId;   // default is the passed value
+    if(custId === "") {
+      // passed in a blank value so set some defaults
+      useAcct = "6357fa3d7511407e6d732fe4"; // init service account for testing purposes.
+      console.log('override acct num for customer SELECTED - DEFAULT SERVICE ACCT');
+
+      // OVERRIDE -> set internally
+      if(this.state.custId !== ""){
+        console.log('override acct num for customer SELECTED - STATE VAR');
+        useAcct = this.state.custId;
+      }
+    } 
+
+    // check prices.time first,then update if needed
+
+    // console.log(this.state.prices.time);       // last gathererd time
+    // console.log(Date.now());                  //UNIX time in ms
+
+    let priceElapsed = Date.now() - this.state.prices.time;
+
+    if(priceElapsed > 200000){
+      // 200K ms
+      console.log(priceElapsed);
+
+      getPrices(this.state.baseCurrency).then(prices => {
+        this.setState(prices);
+      }).then(() =>{
+
+        //then call customer accounts
+        getAccount(useAcct)
+          .then(account_list => {
+
+            // set controls for addDAO (BANK) and addVISA (based on current accounts)
+            for(let i=0; i<account_list.length; i++) {
+              // console.log(account_list[i]);
+              let thisAccount = account_list[i];
+
+              if(thisAccount.currency === "BANK"){
+                this.setState({hasDAO:true})
+              } else if(thisAccount.currency === "USDC" || thisAccount.currency === "USDC_V") {
+                this.setState({hasVISA: true})
+              }
+            }
+
+            this.setState({account_list: account_list, custId: useAcct})
+
+            // then load the customers balance
+            getBalance(account_list, this.state)
+                .then(balance => {
+                  this.setState({balance:balance})
+                })
+
+            // then load in all the trades (optional)
+            showTrades()
+              .then(trades => {
+
+                let buyOrders = trades[0];
+                let sellOrders = trades[1];
+
+                this.setState({ buyOrders: buyOrders, sellOrders: sellOrders });
+
+              });
+
+          })    // end then callback function for getAccount
+
+        console.log("THIS Method RETURN FROM CALL BCARD API FOR getMaster");
+
+
+    })    // end then after prices calls  - skip for master refresh, unless time
+
+    } else {
+      // skip the prices update for display
+      console.log(priceElapsed);
+      //then call customer accounts
+      getAccount(useAcct)
+        .then(account_list => {
+
+          // set controls for addDAO (BANK) and addVISA (based on current accounts)
+          for(let i=0; i<account_list.length; i++) {
+            // console.log(account_list[i]);
+            let thisAccount = account_list[i];
+
+            if(thisAccount.currency === "BANK"){
+              this.setState({hasDAO:true})
+            } else if(thisAccount.currency === "USDC" || thisAccount.currency === "USDC_V") {
+              this.setState({hasVISA: true})
+            }
+          }
+
+          this.setState({account_list: account_list, custId: useAcct})
+
+          // then load the customers balance
+          getBalance(account_list, this.state)
+              .then(balance => {
+                this.setState({balance:balance})
+              })
+
+          })    // end then callback function for getAccount
+
+        console.log("THIS Method - Short RETURN FROM CALL BCARD API FOR getMaster");
+
+    }
+
+
+
+  }
 
   // lookup info based on specified ID
   walletAddressInfo = (id) => {
@@ -706,7 +873,7 @@ class App extends Component {
 
         if( info.currency.startsWith("VC_") ){
           // no address available
-          alert("No wallet address for FIAT Accounts - use Deposit Function");
+          alert("Info for Account with id: "+id+" | Balance: " + account_info.balance.accountBalance + " " + account_info.currency + " | CustomerID: " + account_info.customerId +" No address for VC -> Use Deposit Function";
         } else {
           walletAddress = account_info[0].address;              // hard coded test for QR
           this.setState({"acctAddress":walletAddress});        // confirm setState for address of selected wallet
@@ -719,7 +886,7 @@ class App extends Component {
 
         // console.log("Implement QR Code visual display on Account Info Click.");
 
-        alert("Account Info | Balance: " + account_info.balance.accountBalance + " " + account_info.currency + " | CustomerID: " + account_info.customerId + " | Public Address: " + walletAddress);
+        alert("Info for Account with id: "+id+" | Balance: " + account_info.balance.accountBalance + " " + account_info.currency + " | CustomerID: " + account_info.customerId + " | Public Address: " + walletAddress);
         console.log("RETURN FROM TATUM LEDGER ADDRESS INFO LOOKUP:" + walletAddress)
       })
   }
@@ -845,6 +1012,7 @@ class App extends Component {
                     onChangeForm={this.onChangeForm}
                     createNewUser={this.createNewUser}
                     loginUser={this.loginUser}
+                    signInWithPhoneNumber={this.signInWithPhoneNumber}
                     >
                   </CreateUser>
 
@@ -912,6 +1080,8 @@ class App extends Component {
 
                   getPrices={this.getPrices}
                   getAccount={this.getAccount}
+                  getMaster={this.getMaster}
+
                   getBalance={this.getBalance}
                   getCustomers={this.getCustomers}
 
