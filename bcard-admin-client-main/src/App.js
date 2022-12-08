@@ -873,7 +873,7 @@ class App extends Component {
 
         if( info.currency.startsWith("VC_") ){
           // no address available
-          alert("Info for Account with id: "+id+" | Balance: " + account_info.balance.accountBalance + " " + account_info.currency + " | CustomerID: " + account_info.customerId +" No address for VC -> Use Deposit Function";
+          alert("Info for Account with id: "+id+" | Balance: " + account_info.balance.accountBalance + " " + account_info.currency + " | CustomerID: " + account_info.customerId +" No address for VC -> Use Deposit Function");
         } else {
           walletAddress = account_info[0].address;              // hard coded test for QR
           this.setState({"acctAddress":walletAddress});        // confirm setState for address of selected wallet
