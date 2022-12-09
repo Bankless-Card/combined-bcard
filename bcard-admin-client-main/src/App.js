@@ -1113,20 +1113,22 @@ class App extends Component {
           <div className="row">
             <div className="col">
 
-              <ul>
-                {this.state.balance > 0 && <li><strong>USER BALANCE: ${this.state.balance} </strong></li>}
-                <li>Current Prices:
-                  <ul>
-                    {this.state.prices.eth && <li>1 ETH = ${this.state.prices.eth} {this.state.baseCurrency} </li> }
-                    {this.state.prices.btc && <li>1 BTC = ${this.state.prices.btc} {this.state.baseCurrency} </li> }
-                    {this.state.prices.bank && <li>1 BANK = ${this.state.prices.bank} {this.state.baseCurrency} </li> }
+              <hr />
+                {this.state.balance > 0 && <h3><strong>USER BALANCE: ${this.state.balance} </strong></h3>}
+                <h6>Current Prices:</h6>
+                  <ul className="miniPrices">
+                    {this.state.prices.eth && 
+                      <li><strong>1 ETH</strong> = ${this.state.prices.eth} {this.state.baseCurrency} | </li>
+                    }
+                    {this.state.prices.btc && <li><strong>1 BTC</strong> = ${this.state.prices.btc} {this.state.baseCurrency} | </li> }
+                    {this.state.prices.bank && <li><strong>1 BANK</strong> = ${this.state.prices.bank} {this.state.baseCurrency} | </li> }
 
-                    {this.state.prices.usd && <li>1 USD = ${this.state.prices.usd} {this.state.baseCurrency} </li> }
-                    {this.state.prices.chf && <li>1 CHF = ${this.state.prices.chf} {this.state.baseCurrency} </li> }
+                    {/*{this.state.prices.usd && <li>1 USD = ${this.state.prices.usd.toFixed(3)} {this.state.baseCurrency} | </li> }*/}
+                    {this.state.prices.chf && <li><strong>1 CHF</strong> = ${this.state.prices.chf} {this.state.baseCurrency} </li> }
 
                   </ul>
-                </li>
-              </ul>
+
+                <hr />
 
             </div>
           </div>

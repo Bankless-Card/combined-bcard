@@ -208,7 +208,7 @@ export function SwapForm(props) {
     let solo = "XYZ";
 
 
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs, ] = useState({});   //inputNames, setInputNames
     // const [acct, setAcct] = useState({});
     const handleSubmit = (event) => {
         // alert('Your balance is: ' + balance);
@@ -233,7 +233,14 @@ export function SwapForm(props) {
         const name = event.target.name;
         const value = event.target.value;
 
+        // let curOut = document.getElementById('currencyOut');
+        // let curVal = curOut.value;
+        //let curOutText = curOut.options[curOut.selectedIndex].text;
+        // console.log(curOut.value, curOut.options[curOut.selectedIndex].text);
+
+
         setInputs(values => ({...values, [name]:value }));
+        // setInputNames(values => ({ ...values, [name]:curOutText }))
 
         console.log("Also toggles on select dropdown");
     }
@@ -263,76 +270,108 @@ export function SwapForm(props) {
               </div>
             </div>*/}
 
-            <div className="row">
+            <h4>I want to swap my {inputs.currencyOut} for {inputs.currencyIn}</h4>
+
+            <div className="tokenBox">
+              <div className="row">
+                <div className="col">
+                  <select id="currencyOut" name="currencyOut" defaultValue="lime" onChange={handleChange}>
+                  <option value="">...</option>
+                  { props.state.account_list.length > 1 ? 
+
+                    props.state.account_list
+                        .sort((a,b) => a.currency > b.currency ? 1 : -1)
+                        .map((account, index) => (
+                            <option data-index={index} value={account.id} key={account.id} > 
+                              {account.currency}
+                            </option>
+                          ))
+
+                      : <>
+                          <option value="grapefruit">Please Grapefruit </option>
+                          <option value="lime">Select Lime </option>
+                          <option value="coconut">An Coconut</option>
+                          <option value="mango">Account Mango</option>
+                        </>
+                  }
+
+                </select>
+                  <p>Balance:</p>
+                </div>
+                <div className="col">
+                  <div className="col-sm-10">
+                    <input 
+                      id="tradeAmount"
+                      name="amount" 
+                      type="text" 
+                      value={inputs.amount} 
+                      placeholder={placeholderAmount} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+                  <button>MAX</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flipButtonBox">
+              <img className='alertLogo' src='https://via.placeholder.com/300' alt='' />
+            </div>
+
+            <div className="tokenBox">
+              <div className="row">
+                <div className="col">
+                  <select id="currencyIn" name="currencyIn" defaultValue="lime" onChange={handleChange}>
+                  <option value="">...</option>
+                  { props.state.account_list.length > 1 ? 
+
+                    props.state.account_list
+                        .sort((a,b) => a.currency > b.currency ? 1 : -1)
+                        .map((account, index) => (
+                            <option data-index={index} value={account.id} key={account.id} > 
+                              {account.currency}
+                            </option>
+                          ))
+
+                      : <>
+                          <option value="grapefruit">Please Grapefruit </option>
+                          <option value="lime">Select Lime </option>
+                          <option value="coconut">An Coconut</option>
+                          <option value="mango">Account Mango</option>
+                        </>
+                  }
+
+                </select>
+                  <p>MyBalance:</p>
+                </div>
+                <div className="col">
+                  <p>RCV num</p>
+                  <p>TOTAL: ${solo}</p>
+                </div>
+              </div>
+            </div>
+
+{/*            <div className="row">
               <label htmlFor="currencyOut" className="col-sm-2 col-form-label col-form-label-sm">Token Out:</label>
 
               <div className="col-sm-10">
-                <select id="currencyOut" name="currencyOut" defaultValue="lime" onChange={handleChange}>
-                  <option value="">...</option>
-                  { props.state.account_list.length > 1 ? 
-
-                    props.state.account_list
-                        .sort((a,b) => a.currency > b.currency ? 1 : -1)
-                        .map((account, index) => (
-                            <option data-index={index} value={account.id} key={account.id} > 
-                              {account.currency}
-                            </option>
-                          ))
-
-                      : <>
-                          <option value="grapefruit">Please Grapefruit </option>
-                          <option value="lime">Select Lime </option>
-                          <option value="coconut">An Coconut</option>
-                          <option value="mango">Account Mango</option>
-                        </>
-                  }
-
-                </select>
+                
               </div>
-            </div>
+            </div>*/}
 
-            <div className="row">
+            {/*<div className="row">
               <label htmlFor="amount" className="col-sm-2 col-form-label col-form-label-sm">Amount:</label>
 
-              <div className="col-sm-10">
-                <input 
-                  id="tradeAmount"
-                  name="amount" 
-                  type="text" 
-                  value={inputs.amount} 
-                  placeholder={placeholderAmount} 
-                  onChange={handleChange} 
-                />
-              </div>
-            </div>
+              
+            </div>*/}
 
-            <div className="row">
+            {/*<div className="row">
               <label htmlFor="currencyIn" className="col-sm-2 col-form-label col-form-label-sm">Token In:</label>
 
               <div className="col-sm-10">
-                <select id="currencyIn" name="currencyIn" defaultValue="lime" onChange={handleChange}>
-                  <option value="">...</option>
-                  { props.state.account_list.length > 1 ? 
-
-                    props.state.account_list
-                        .sort((a,b) => a.currency > b.currency ? 1 : -1)
-                        .map((account, index) => (
-                            <option data-index={index} value={account.id} key={account.id} > 
-                              {account.currency}
-                            </option>
-                          ))
-
-                      : <>
-                          <option value="grapefruit">Please Grapefruit </option>
-                          <option value="lime">Select Lime </option>
-                          <option value="coconut">An Coconut</option>
-                          <option value="mango">Account Mango</option>
-                        </>
-                  }
-
-                </select>
+                
               </div>
-            </div>
+            </div>*/}
 
 
 {/*            <div className="row">
@@ -357,9 +396,9 @@ export function SwapForm(props) {
             
             
             <input id="tradeSubmit" type="submit" value="Submit Swap" />
-            TOTAL: ${solo}
+            
             <hr />
-            <h6>BUY/SELL from/to your default FIAT Account</h6>
+            <h6>BUY/SELL from/to your accounts using Bcard MM.</h6>
 
           </form>
         </div>

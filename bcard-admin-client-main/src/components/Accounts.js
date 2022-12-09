@@ -16,25 +16,45 @@ export const Accounts = ({state, hideId}) => {
 
     const AcctRow = (account,index) => {
 
+        //  console.log(account.accountingCurrency);
+
+        let tokenImg = "img/bLogo.png";
+        let tokenName = "Bankless DAO";
+        let tokenTag = "BANK";
+
+        let tokenBalance = parseFloat(account.balance.availableBalance).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+        let fiatBalance = convertToCAD(account.balance.accountBalance,account.currency,state).toFixed(3).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+
+        if(account.currency === "BANK"){
+            // ok with defaults
+        } else if(account.currency === "VC_USD"){
+            tokenImg = "img/us-flag-icon.png";
+            tokenName = "US Dollar FIAT";
+            tokenTag = "USD";
+        } else if(account.currency === "USDC_V"){
+            tokenImg = "img/usdcToken.jpeg";
+            tokenName = "USDC VISA";
+            tokenTag = "USDC";
+        } else if(account.currency === "ETH"){
+            tokenImg = "img/ethToken.png";
+            tokenName = "Ethereum Testnet";
+            tokenTag = "ETH (sep)";
+
+            tokenBalance = parseFloat(account.balance.availableBalance).toFixed(6);
+        }
+
+
         return(
-              <tr key = {index} className={index%2 === 0?'odd':'even'}>
-                  <td>{index + 1}</td>
-                  { !hideId && 
-                    <td>
-                    <button 
-                      type="btn"
-                      onClick={() =>  {
-                        // this.setState({acctId: account.id}); 
-                        console.log("NOT SHOWN: Need to setState with click here -> emit event?");
-                        // also popup account info alert panel
-                        walletAddressInfo(account.id);
-                      }} >
-                      
-                      {account.id}
-                    </button></td> 
-                  }
-                  <td title={ state.acctAddress || "SHOW WALLET ADDRESS ON HOVER: " }>
-                    <button 
+              <tr key={index} className={index > 1?'surplus':''}>
+                  <td>
+                    <div className="badgeContainer">
+                        <img className="tokenBadge" src={tokenImg} alt="BDAO" />
+                    </div>
+                  </td>
+                  <td className="tokenLabel" title={ state.acctAddress || "SHOW WALLET ADDRESS ON HOVER: " }>
+                  {tokenName} <span>-1.81%</span><br/>
+                  
+                    <div
                       type="btn"
                       onClick={async () => {
                         let returnData = await walletAddressInfo(account.id);
@@ -46,41 +66,66 @@ export const Accounts = ({state, hideId}) => {
                             console.log("Need to setState here to set address & QR");
                             console.log(state);
                             
-                            // this.setState((state) => {
-                            //     return {acctAddress: walletAddress}     // override state with new addr
-                            // })
                         } else {
+                            alert("Submit Deposit to fund FIAT Account");
                             console.log("It's a FIAT account - likely - or no addresses created");
                         }
                         
                       }} >
-                        {account.currency}
-                    </button>
+                      <small>{tokenTag}</small>
+                    </div>
                   </td>
-                  <td>{account.balance.availableBalance}</td>
-                  <td>$ { convertToCAD(account.balance.accountBalance,account.currency,state).toFixed(3) }</td>
+                  <td>
+                    {tokenBalance} <small>{account.currency}</small><br/>
+                    <span>$ { fiatBalance }</span> <small>{account.accountingCurrency}</small>
+                  </td>
+                  
               </tr>
           )
     }
 
-    const userTable = accounts.map((user,index) => AcctRow(user,index))
+    // let fiatBalance = convertToCAD(account.balance.accountBalance,account.currency,state).toFixed(3).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+
+
+    const tokenTable = accounts.sort((a,b) => a.balance.accountBalance < b.balance.accountBalance ? 1 : -1).map((user,index) => AcctRow(user,index))
+
+    let moreShow = false;
+
+    let moreRows = document.getElementsByClassName('surplus');
+    // console.log(moreRows);
+
+    function showAll(moreRows) {
+        for (let row of moreRows) {
+            console.log(row);
+            row.classList.remove('surplus')
+        }
+    }
+    
+    // moreRows.forEach(element => console.log(element))
 
     return(
         <div className="container">
-            <h2>Accounts</h2>
-            <table className="table table-bordered">
-                <thead>
+            <h2>My Tokens</h2>
+            <table className="table" isactive={moreShow.toString()}>
+                {/*<thead>
                 <tr>
-                    <th>Account #</th>
-                    { !hideId && <th>id</th> }
-                    <th>currency</th>
-                    <th>token</th>
-                    <th>{state.prices.base} balance</th>
+                    <th>TokenLogo</th>
+                    <th>Info</th>
+                    <th>token & balance</th>
                 </tr>
-                </thead>
+                </thead>*/}
                 <tbody>
-                    {userTable}
+                    {tokenTable}
                 </tbody>
+                <tfoot><tr>{accounts.length > 2 &&
+                    <td colSpan="3"><hr/><br/>
+                        <button
+                            onClick={() => {
+                                showAll(moreRows)
+                            }}
+                        >...show more ... </button>
+                    </td>
+                }</tr></tfoot>
             </table>
         </div>
     )

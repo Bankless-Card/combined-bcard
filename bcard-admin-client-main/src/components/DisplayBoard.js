@@ -60,6 +60,66 @@ function PriceBar(props) {
   
 }
 
+function UserLogo(props) {
+
+    // should return a profile logo based on input graphic
+    // css style for circle crop as per figma
+
+    console.log(props.custId);      // use custId to get stored profile picture
+
+    return (
+        <div className="profileContainer">
+            <img className='userLogo' src='https://via.placeholder.com/300' alt='' />
+        </div>
+        )
+}
+
+function AlertButton(props) {
+
+    // should return a profile logo based on input graphic
+    // css style for circle crop as per figma
+
+    return (
+        <div className="alertContainer">
+            <img className='alertLogo' src='https://via.placeholder.com/300' alt='' />
+        </div>
+        )
+}
+
+// function SendButton() {
+//     return (
+//         <div className="buttonContainer" onPress={() => console.log("Button Press")}>
+//             <button className="btn btn-danger">
+//                 <img src="img/send-arrow.png" alt="Send Arrow Up" />
+//                 Send
+//             </button>
+//         </div>
+//         )
+// }
+
+
+// function ReceiveButton() {
+//     return (
+//         <div className="buttonContainer" onPress={() => console.log("Button Press")}>
+//             <button className="btn btn-danger">
+//                 <img src="img/send-arrow.png" alt="Send Arrow Up" />
+//                 Send
+//             </button>
+//         </div>
+//         )
+// }
+
+function MakeButton(props) {
+    return (
+        <div className="buttonContainer">
+            <button className="btn btn-lg btn-danger bigBtn" onClick={props.clickAction}>
+                <img src={props.img} alt={props.alt} />
+                &nbsp;
+                {props.label}
+            </button>
+        </div>
+        )
+}
 
 export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMaster, getBalance, getCustomers, createTrade, showTrades, newBTCMaster, newBTCAccount, newWalletAddress, getEthAddress, walletAddressInfo, newWalletKey, newUSDWallet, newETHWallet, onboardExecute, newXpubAccount}) => {
 
@@ -89,16 +149,50 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
             qrImg = "https://api.qrserver.com/v1/create-qr-code/?data=" + state.acctAddress + "&amp;size=150x150";
         }
 
+        let thisBalance = state.balance.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        let halfBalance = ((state.balance/2).toFixed(2)).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+
     return(
         <div>
             <PriceBar state={state} getPrices={getPrices} />
             <div className="display-board">
                 <div>
-                    <h6>CustomerId: {state.custId || "[not set]" }</h6>
-                    <small>Customer view area</small>
                     <hr />
+                    <h6>
+                        <AlertButton />
+                        {state.custId ?
+                            <UserLogo custId={state.custId} />
+                            :  "[not set]"
+                        }
+                    </h6>
+                    <h5 className="balanceLabel">
+                        Total Balance&nbsp;
+                        <img src="img/eye-balance.png" alt="Show Balance" />
+                    </h5>
+
                     <div className="number">
-                        Balance: ${state.balance ? state.balance.toFixed(2) : "[...loading...]"} <small>{state.prices.base}</small>
+                        ${state.balance ? thisBalance : "[...loading...]"} <small>{state.prices.base}</small>
+                    </div>
+                    <div className="row">
+                        <h3 className="text-center">Assets Value <span className="hl">|</span> ${ halfBalance }</h3>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <MakeButton 
+                                label="Receive" 
+                                img="img/receive-arrow.png" 
+                                alt="Receive Button" 
+                                clickAction={() => console.log("Receive Button Press")}
+                        />
+                        </div>
+                        <div className="col">
+                            <MakeButton 
+                                label="Send" 
+                                img="img/send-arrow.png" 
+                                alt="Send Button" 
+                                clickAction={() => console.log("Send Button Press")}
+                            />
+                        </div>
                     </div>
                     {/* <!-- Accounts list conditinally loaded here --> **/}
                     <div className="row">

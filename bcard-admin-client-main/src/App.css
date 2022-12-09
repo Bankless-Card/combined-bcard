@@ -7,6 +7,10 @@
   text-align: center;
 }
 
+.text-center {
+  width:100%;
+}
+
 .display-board {
   width: 100%;
   background-color: rgb(555, 200, 789);
@@ -25,8 +29,9 @@
 }
 
 .number {
-  color: red;
-  font-size: 48px;
+  color: black;
+  font-size: 40px;
+  font-weight: bold;
   text-align: center;
 }
 
@@ -84,4 +89,109 @@
   background: white;
   padding: 5px;
   border-radius: 5px;
+}
+
+/* real design style starts here */
+.profileContainer {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow:hidden;
+  text-align:center;
+}
+
+.profileContainer .userLogo {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.alertContainer {
+  float:right;
+  width:50px;
+  height:50px;
+  border-radius:6px;
+  overflow:hidden;
+  text-align:center;
+
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.18);
+}
+
+.alertContainer .alertLogo {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.balanceLabel {
+  text-align:center;
+}
+
+.hl {
+  color: red;
+}
+
+.buttonContainer {
+  text-align: center;
+  width: 100%;
+}
+
+.bigBtn {
+  display:inline-block;
+  padding: 15px 33%;
+}
+
+.tokenBadge {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
+
+.badgeContainer {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  overflow:hidden;
+  text-align:center;
+}
+
+.tokenLabel span {
+  color: red;
+}
+
+.table tr.surplus {
+  display:none;
+}
+
+.table[isactive="true"] tr.surplus {
+  display: block;
+}
+
+.tokenBox {
+  margin: 5px;
+  border-radius: 6px;
+  padding: 5px;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.18);
+}
+
+.flipButtonBox {
+  width: 65px;
+  height: 65px;
+  border-radius: 30%;
+  overflow:hidden;
+  text-align:center;
+}
+
+.miniPrices {
+  list-style: none;
+  margin:0;
+  padding:0;
+}
+
+.miniPrices li {
+  float:left;
+  margin-right: 5px;
 }
