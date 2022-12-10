@@ -17,6 +17,22 @@ const feesAcctBANK = feesAccts.BANK;
 //   return sel.options[sel.selectedIndex].text;
 // }
 
+function setMax(event, handleChange) {
+  event.preventDefault();
+
+  let thisMax = document.getElementById('maxAvailable').innerHTML;
+  let thisSwapAmt = document.getElementById('swapAmount');
+  thisSwapAmt.value = thisMax;
+
+  event.target.name = "amount";
+  event.target.value = thisMax;
+
+  // event.target.name
+  // event.target.value
+  
+  handleChange(event);
+}
+
 async function createSwap(amount, acct1, acct2, prices){
 
     console.log(amount, acct1, acct2, prices);
@@ -205,11 +221,14 @@ export function SwapForm(props) {
 
     // const [solo, setSolo] = useState({});
 
-    let solo = "XYZ";
+    // let solo = "XYZ";
 
 
     const [inputs, setInputs, ] = useState({});   //inputNames, setInputNames
     // const [acct, setAcct] = useState({});
+    // let [outName, setOutName] = useState({});
+    // const [inName, setInName] = useState("IN");
+
     const handleSubmit = (event) => {
         // alert('Your balance is: ' + balance);
         console.log("SUBMIT:", inputs);
@@ -229,20 +248,156 @@ export function SwapForm(props) {
         event.preventDefault();
     }
 
+    // setOutName("OUT");
+    //setInName ("IN");
+
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
 
-        // let curOut = document.getElementById('currencyOut');
-        // let curVal = curOut.value;
-        //let curOutText = curOut.options[curOut.selectedIndex].text;
-        // console.log(curOut.value, curOut.options[curOut.selectedIndex].text);
+        let accts = props.state.account_list;
 
+        let curOut = document.getElementById('currencyOut');
+        // let curVal = curOut.value;
+        let curOutText = curOut.options[curOut.selectedIndex].text;
+        let curIn = document.getElementById('currencyIn');
+        let curInText = curIn.options[curIn.selectedIndex].text;
+        //console.log(curOutText);
+        console.log(name);
+
+        let myPrevBal = document.getElementById('myBalance');
+
+        let calcAmt = 0.00;
+        let tokenAmt = value;
+        let totalAmt = 0.00;
+
+        if(name==="currencyOut" && curOutText) {
+          // relabel title
+
+          let labelTokenOut = document.getElementById('outName');
+          labelTokenOut.innerHTML = curOutText
+
+          // get balance from current account
+          // let accts = props.state.account_list;
+          // console.log(accts);
+          let matchAcct = accts.find(e => e.currency === curOutText);
+          console.log(matchAcct.balance.availableBalance);
+
+          let maxAvailableOutput = parseFloat(matchAcct.balance.availableBalance).toFixed(3);
+          if(curOutText === "ETH"){
+            maxAvailableOutput = parseFloat(matchAcct.balance.availableBalance).toFixed(6);
+          }
+
+          // relabel out Balance
+          let maxLabel = document.getElementById('maxAvailable');
+          maxLabel.innerHTML = maxAvailableOutput;
+          // maxLabel.blur();
+
+        } else if(name==="currencyIn" && curInText) {
+
+          let labelTokenIn = document.getElementById('inName');
+          labelTokenIn.innerHTML = curInText
+
+          myPrevBal.innerHTML = 0.00;
+
+          // get balance from current account
+          let matchAcct = accts.find(e => e.currency === curInText);
+          // console.log(matchAcct.balance.availableBalance);
+
+          let currentBal = parseFloat(matchAcct.balance.accountBalance).toFixed(3);
+          if(curInText === "ETH"){
+            currentBal = parseFloat(matchAcct.balance.accountBalance).toFixed(6);
+          }
+
+          // relabel out Balance
+          let currentLabel = document.getElementById('myBalance');
+          currentLabel.innerHTML = currentBal;
+          // maxLabel.blur();
+
+          // also update total on token desired update
+          // update the TOTAL in USD, if both tokens are selected
+          if(curOutText && curInText) {
+
+            // value here is token amount
+            if(curOutText === "USDC_V" || curOutText === "VC_USD") {
+              totalAmt = tokenAmt;    // sending USD, pass through value
+
+            } else if (curOutText === "BANK") {
+              // sending BANK
+              totalAmt = tokenAmt * props.state.prices.bank;    // in USD
+
+            } else if (curOutText === "ETH") {
+              // sending ETH
+              totalAmt = tokenAmt * props.state.prices.eth;     // USD
+
+            }
+
+            let labelTotal = document.getElementById('totalAmt');
+            labelTotal.innerHTML = totalAmt;
+
+          }
+
+
+        } else if(name === "amount") {
+          // then value is the amount of token to be traded
+
+          // update the TOTAL in USD, if both tokens are selected
+          if(curOutText && curInText) {
+
+            // value here is token amount
+            if(curOutText === "USDC_V" || curOutText === "VC_USD") {
+              totalAmt = tokenAmt;    // sending USD, pass through value
+
+              if(curInText === "USDC_V" || curInText === "VC_USD") {
+                calcAmt = tokenAmt;     // receiving USD
+              } else if (curInText === "ETH"){
+                // receiving ETH
+                calcAmt = tokenAmt / props.state.prices.eth;    // in ETH Tokens
+              } else if (curInText === "BANK"){
+                // receiving BANK
+                calcAmt = tokenAmt / props.state.prices.bank;    // in BANK Tokens
+              }
+
+
+            } else if (curOutText === "BANK") {
+              // sending BANK
+              totalAmt = tokenAmt * props.state.prices.bank;    // in USD
+
+              if(curInText === "USDC_V" || curInText === "VC_USD") {
+                calcAmt = totalAmt;     // receiving USD
+              } else if (curInText === "ETH"){
+                // receiving ETH
+                calcAmt = totalAmt / props.state.prices.eth;    // in ETH Tokens
+              } else if (curInText === "BANK"){
+                // receiving BANK
+                calcAmt = totalAmt / props.state.prices.bank;    // in BANK Tokens
+              }
+            } else if (curOutText === "ETH") {
+              // sending ETH
+              totalAmt = tokenAmt * props.state.prices.eth;     // USD
+
+              if(curInText === "USDC_V" || curInText === "VC_USD") {
+                calcAmt = totalAmt;     // receiving USD
+              } else if (curInText === "ETH"){
+                // receiving ETH
+                calcAmt = totalAmt / props.state.prices.eth;    // in ETH Tokens
+              } else if (curInText === "BANK"){
+                // receiving BANK
+                calcAmt = totalAmt / props.state.prices.bank;    // in BANK Tokens
+              }
+            }
+
+            let labelTotal = document.getElementById('totalAmt');
+            labelTotal.innerHTML = totalAmt;
+
+            let labelCalc = document.getElementById('calcAmt');
+            labelCalc.innerHTML = calcAmt;
+          }
+        }
 
         setInputs(values => ({...values, [name]:value }));
-        // setInputNames(values => ({ ...values, [name]:curOutText }))
 
-        console.log("Also toggles on select dropdown");
+        // console.log("Also toggles on select dropdown");
     }
 
     let accounts = props.state.account_list;
@@ -270,7 +425,7 @@ export function SwapForm(props) {
               </div>
             </div>*/}
 
-            <h4>I want to swap my {inputs.currencyOut} for {inputs.currencyIn}</h4>
+            <h4>I want to swap my <span id="outName">{"outName"}</span> for <span id="inName">{"inName"}</span></h4>
 
             <div className="tokenBox">
               <div className="row">
@@ -296,26 +451,31 @@ export function SwapForm(props) {
                   }
 
                 </select>
-                  <p>Balance:</p>
+                  <p>Balance: <span id="maxAvailable">0</span></p>
                 </div>
                 <div className="col">
                   <div className="col-sm-10">
                     <input 
-                      id="tradeAmount"
+                      id="swapAmount"
                       name="amount" 
                       type="text" 
-                      value={inputs.amount} 
+                      value={inputs.amount}
                       placeholder={placeholderAmount} 
                       onChange={handleChange} 
                     />
                   </div>
-                  <button>MAX</button>
+                  <button
+                    className="maxBtn"
+                    onClick={(e) => setMax(e,handleChange)}
+                  >MAX</button>
                 </div>
               </div>
             </div>
 
-            <div className="flipButtonBox">
-              <img className='alertLogo' src='https://via.placeholder.com/300' alt='' />
+            <div className="flipButtonBox"
+              onClick={() => console.log("this should flip token currency names")}
+              >
+              <img className='alertLogo' src='img/swap.png' alt='swap-logo' />
             </div>
 
             <div className="tokenBox">
@@ -342,60 +502,17 @@ export function SwapForm(props) {
                   }
 
                 </select>
-                  <p>MyBalance:</p>
+                  <p>MyBalance: <span id="myBalance">0</span></p>
                 </div>
                 <div className="col">
-                  <p>RCV num</p>
-                  <p>TOTAL: ${solo}</p>
+                  <p id="calcAmt"><strong>RCV num</strong></p>
+                  <p>TOTAL: $<span id="totalAmt">XX.YY</span></p>
                 </div>
               </div>
             </div>
-
-{/*            <div className="row">
-              <label htmlFor="currencyOut" className="col-sm-2 col-form-label col-form-label-sm">Token Out:</label>
-
-              <div className="col-sm-10">
-                
-              </div>
-            </div>*/}
-
-            {/*<div className="row">
-              <label htmlFor="amount" className="col-sm-2 col-form-label col-form-label-sm">Amount:</label>
-
-              
-            </div>*/}
-
-            {/*<div className="row">
-              <label htmlFor="currencyIn" className="col-sm-2 col-form-label col-form-label-sm">Token In:</label>
-
-              <div className="col-sm-10">
-                
-              </div>
-            </div>*/}
-
-
-{/*            <div className="row">
-              <label htmlFor="selectBS" className="col-sm-2 col-form-label col-form-label-sm" title="Price per token sold.">Price:</label>
-
-              <div className="col-sm-10">
-                <input 
-                  id="tradePrice"
-                  name="price" 
-                  type="text" 
-                  value={inputs.price}
-                  placeholder={
-                    placeholderPrice
-                  } 
-                  onChange={handleChange} 
-                />
-                 (in {props.state.baseCurrency})
-              </div>
-            </div>*/}
-
             
             
-            
-            <input id="tradeSubmit" type="submit" value="Submit Swap" />
+            <input class="btn btn-danger" id="tradeSubmit" type="submit" value="Submit Swap" />
             
             <hr />
             <h6>BUY/SELL from/to your accounts using Bcard MM.</h6>

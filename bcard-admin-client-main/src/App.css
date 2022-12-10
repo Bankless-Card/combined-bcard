@@ -180,9 +180,15 @@
 .flipButtonBox {
   width: 65px;
   height: 65px;
+  margin-left:40%;
   border-radius: 30%;
   overflow:hidden;
   text-align:center;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.18);
+}
+
+.flipButtonBox img {
+  margin: 25px;
 }
 
 .miniPrices {
@@ -194,4 +200,12 @@
 .miniPrices li {
   float:left;
   margin-right: 5px;
+}
+
+.maxBtn {
+  float: right;
+}
+
+#tradeSubmit {
+  width: 100%;
 }

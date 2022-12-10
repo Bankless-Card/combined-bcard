@@ -68,7 +68,7 @@ function UserLogo(props) {
     console.log(props.custId);      // use custId to get stored profile picture
 
     return (
-        <div className="profileContainer">
+        <div className="profileContainer" onClick={() => console.log("User Panel")}>
             <img className='userLogo' src='https://via.placeholder.com/300' alt='' />
         </div>
         )
@@ -86,28 +86,6 @@ function AlertButton(props) {
         )
 }
 
-// function SendButton() {
-//     return (
-//         <div className="buttonContainer" onPress={() => console.log("Button Press")}>
-//             <button className="btn btn-danger">
-//                 <img src="img/send-arrow.png" alt="Send Arrow Up" />
-//                 Send
-//             </button>
-//         </div>
-//         )
-// }
-
-
-// function ReceiveButton() {
-//     return (
-//         <div className="buttonContainer" onPress={() => console.log("Button Press")}>
-//             <button className="btn btn-danger">
-//                 <img src="img/send-arrow.png" alt="Send Arrow Up" />
-//                 Send
-//             </button>
-//         </div>
-//         )
-// }
 
 function MakeButton(props) {
     return (
