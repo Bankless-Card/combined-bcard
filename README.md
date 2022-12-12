@@ -16,7 +16,7 @@ Bankless Card Combined App Package
     
     $ cd.. (back to root)
     $ touch .env            //  add in the API keys here
-    $ npm install  --force     
+    $ npm install     
     $ npm run start:dev     //  to start the API server && readout from API Calls in window here
     
 go to http://localhost:3080 in your browser to view the app and login.
