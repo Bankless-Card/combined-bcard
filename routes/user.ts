@@ -739,7 +739,7 @@ class User {
                 headers: tatumHeaders
             })
             .then((response:any) => {
-                console.log(response.data);     // this shows the correctly retrieved data in the server console
+                // console.log(response.data);     // this shows the correctly retrieved data in the server console
                 res.send(response.data);        // return data to the front end
             })
             .catch((error:any) => {
@@ -794,11 +794,11 @@ class User {
                 headers: tatumHeaders
             })
             .then((response:any) => {
-                console.log(response.data);     // this shows the correctly retrieved data in the server console
+                // console.log(response.data);     // this shows the correctly retrieved data in the server console
                 res.send(response.data);        // return data to the front end
             })
             .catch((error:any) => {
-                console.log(error);
+                console.log("error");
             });
 
         });

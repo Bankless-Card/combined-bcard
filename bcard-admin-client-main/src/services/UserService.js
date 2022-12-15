@@ -23,7 +23,7 @@ export async function getLedgerAccounts() {
 
 export async function getCustomers() {
 
-    console.log("Running getCustomers");
+    // console.log("Running getCustomers");
 
     const response = await fetch('/api/customers');
     return await response.json();
@@ -31,7 +31,7 @@ export async function getCustomers() {
 
 export async function getAccount(id) {
 
-    console.log("Running getAccount");        // id here is CustID
+    // console.log("Running getAccount");        // id here is CustID
 
     const response = await fetch('/api/account/'+ id );
     // console.log(response);                  // these are logging OK to console, but are not being displayed for third acct.

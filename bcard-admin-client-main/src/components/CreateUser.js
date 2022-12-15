@@ -28,7 +28,7 @@ const CreateUser = ({onChangeForm, createNewUser, loginUser, user, signInWithPho
 
                     <button id="" type="button" style={{marginLeft:"5px"}} onClick= {(e) => loginUser()} className="btn btn-warning">Login</button>
 
-                    <button id="sign-in-button" type="button" style={{marginLeft:"5px"}} onClick= {(e) => signInWithPhoneNumber()} className="btn btn-warning">Phone Login</button>
+                    <button disabled id="sign-in-button" type="button" style={{marginLeft:"5px"}} onClick= {(e) => signInWithPhoneNumber()} className="btn btn-warning">Phone Login</button>
                 </form>
                 </div>
             </div>

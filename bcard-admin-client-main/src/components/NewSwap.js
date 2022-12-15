@@ -1,22 +1,12 @@
-import React, { useState } from 'react'
-// import Modal from "../components/Modal";
+import React from 'react'
+import Modal from "../components/Modal";
 import { feesAccts } from '../services/feesAccounts'
 import { currencyLabelOverride } from '../utils/currencyLabelOverride';
-
-// import these constants
-// const feesAcctCAD = "637e60e2600305b81f027d14";
-// const feesAcctBTC = "636bb54f5f95f8f981cbc519";
 
 const feesAcctUSDC = feesAccts.USDC;
 const feesAcctUSD = feesAccts.USD;
 const feesAcctETH = feesAccts.ETH;
 const feesAcctBANK = feesAccts.BANK;
-
-// import { showTrades } from '../services/UserService'
-
-// function getOptionText(sel) {
-//   return sel.options[sel.selectedIndex].text;
-// }
 
 function setMax(event, handleChange) {
   event.preventDefault();
@@ -33,16 +23,6 @@ function setMax(event, handleChange) {
   
   handleChange(event);
 }
-
-// function currencyLabelOverride(cur) {
-//   if(cur === "VC_USD") {
-//     return "USD";
-//   } else if(cur === "USDC_V") {
-//     return "USDC VISA";
-//   } else {
-//     return cur;
-//   }
-// }
 
 async function createSwap(amount, acct1, acct2, prices){
 
@@ -217,75 +197,61 @@ async function createSwap(amount, acct1, acct2, prices){
 
   }
 
-export function SwapForm(props) {
+// export function SwapForm(props) {
 
-// class SwapForm extends React.Component {
+class SwapForm extends React.Component {
 
-  // state = {
-  //   show: false
-  // };
+  state = {
+    show: false,
+    inputs: [],
+    accounts: []
+  };
 
-  // showModal = e => {
-  //  // e.preventDefault();
-  //  console.log(state)
-  //   state.show = !state.show
-  // };
+  showModal = e => {
+   // e.preventDefault();
+   console.log(this.state)
+    // state.show = !state.show
+    this.setState({
+      show: !this.state.show
+    });
+  };
 
-    // console.log(props.state.custId);   // use PROPS to pass in the account list for the selected user with which to buld the options for selection
+    handleSubmit = (event) => {
 
-    // if(props.state.account_list.length > 1) {
-    //   //no customer selected, use service account as default to build the trade UI
-    //   // console.log("No customer selected - dummy data - Use Service Acct")
+      event.preventDefault();
 
-    //   // var temp = getAccount("6357fa3d7511407e6d732fe4");
-    //   // console.log(temp);  // this is account list for id provided
-    //   // console.log(props.state.account_list);
-    // }
+        console.log("SUBMIT:", this.state.inputs);
 
-    // const [solo, setSolo] = useState({});
+        let curOut = document.getElementById('currencyOut');
+        let curIn = document.getElementById('currencyIn');
 
-    // let solo = "XYZ";
+        let acct1 = curOut.value;       // account 1 is user account they are sending tokens from
+        let acct2 = curIn.value;        // account 2 is user account to receive tokens
 
+        console.log("SWAP confrimation sheet required here w/ " + this.state.inputs.amount + ", etc.")
 
-    const [inputs, setInputs ] = useState({});   //inputNames, setInputNames
-    // const [acct, setAcct] = useState({});
-    // let [outName, setOutName] = useState({});
-    // const [inName, setInName] = useState("IN");
+        this.showModal();
 
-    const handleSubmit = (event) => {
-        // alert('Your balance is: ' + balance);
-        console.log("SUBMIT:", inputs);
+        // await modal confirmation then
+        alert("await modal confirmation then");
 
-        let acct1 = inputs.currencyOut;       // accoutn 1 is user accout they are sending tokens from
-        let acct2 = inputs.currencyIn;        // accoutn 2 is user account to receive tokens
-        // let baseCurrency = props.state.baseCurrency   // use base currency to enable SWAP from MM
+        console.log(this.state.inputs.amount, acct1, acct2, this.props.state.prices)
 
-        // console.log(props.state.baseCurrency);
+        createSwap(this.state.inputs.amount, acct1, acct2, this.props.state.prices);
 
-        console.log("SWAP confrimation sheet required here w/ " + inputs.type, inputs.currencies, inputs.amount, inputs.price)
-
-        // console.log(props.state.prices);
-
-        createSwap(inputs.amount, acct1, acct2, props.state.prices);
-
-        event.preventDefault();
+        
     }
 
-    // setOutName("OUT");
-    //setInName ("IN");
-
-    const handleChange = (event) => {
+    handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
 
-        let accts = props.state.account_list;
+        let accts = this.props.state.account_list;
 
         let curOut = document.getElementById('currencyOut');
-        // let curVal = curOut.value;
         let curOutText = curOut.options[curOut.selectedIndex].text;
         let curIn = document.getElementById('currencyIn');
         let curInText = curIn.options[curIn.selectedIndex].text;
-        //console.log(curOutText);
         console.log(name);
 
         let myPrevBal = document.getElementById('myBalance');
@@ -347,11 +313,11 @@ export function SwapForm(props) {
 
             } else if (curOutText === "BANK") {
               // sending BANK
-              totalAmt = tokenAmt * props.state.prices.bank;    // in USD
+              totalAmt = tokenAmt * this.props.state.prices.bank;    // in USD
 
             } else if (curOutText === "ETH") {
               // sending ETH
-              totalAmt = tokenAmt * props.state.prices.eth;     // USD
+              totalAmt = tokenAmt * this.props.state.prices.eth;     // USD
 
             }
 
@@ -375,38 +341,38 @@ export function SwapForm(props) {
                 calcAmt = tokenAmt;     // receiving USD
               } else if (curInText === "ETH"){
                 // receiving ETH
-                calcAmt = tokenAmt / props.state.prices.eth;    // in ETH Tokens
+                calcAmt = tokenAmt / this.props.state.prices.eth;    // in ETH Tokens
               } else if (curInText === "BANK"){
                 // receiving BANK
-                calcAmt = tokenAmt / props.state.prices.bank;    // in BANK Tokens
+                calcAmt = tokenAmt / this.props.state.prices.bank;    // in BANK Tokens
               }
 
 
             } else if (curOutText === "BANK") {
               // sending BANK
-              totalAmt = tokenAmt * props.state.prices.bank;    // in USD
+              totalAmt = tokenAmt * this.props.state.prices.bank;    // in USD
 
               if(curInText === "USDC_V" || curInText === "VC_USD") {
                 calcAmt = totalAmt;     // receiving USD
               } else if (curInText === "ETH"){
                 // receiving ETH
-                calcAmt = totalAmt / props.state.prices.eth;    // in ETH Tokens
+                calcAmt = totalAmt / this.props.state.prices.eth;    // in ETH Tokens
               } else if (curInText === "BANK"){
                 // receiving BANK
-                calcAmt = totalAmt / props.state.prices.bank;    // in BANK Tokens
+                calcAmt = totalAmt / this.props.state.prices.bank;    // in BANK Tokens
               }
             } else if (curOutText === "ETH") {
               // sending ETH
-              totalAmt = tokenAmt * props.state.prices.eth;     // USD
+              totalAmt = tokenAmt * this.props.state.prices.eth;     // USD
 
               if(curInText === "USDC_V" || curInText === "VC_USD") {
                 calcAmt = totalAmt;     // receiving USD
               } else if (curInText === "ETH"){
                 // receiving ETH
-                calcAmt = totalAmt / props.state.prices.eth;    // in ETH Tokens
+                calcAmt = totalAmt / this.props.state.prices.eth;    // in ETH Tokens
               } else if (curInText === "BANK"){
                 // receiving BANK
-                calcAmt = totalAmt / props.state.prices.bank;    // in BANK Tokens
+                calcAmt = totalAmt / this.props.state.prices.bank;    // in BANK Tokens
               }
             }
 
@@ -416,148 +382,143 @@ export function SwapForm(props) {
             let labelCalc = document.getElementById('calcAmt');
             labelCalc.innerHTML = calcAmt.toFixed(8);
           }
+
+
         }
 
-        setInputs(values => ({...values, [name]:value }));
+        if(name === "amount") {
+        // break this down as it needs to set the state.inputs
+        var inputsState = { ...this.state.inputs }
+        inputsState.amount = value;
+
+        this.setState({
+          inputs: inputsState
+        });
+        } 
+
+        // this.setInputs(values => ({...values, [name]:value }));
 
         // console.log("Also toggles on select dropdown");
     }
 
-    let accounts = props.state.account_list;
 
-    if(accounts.length > 0) {
-      // let placeholderAmount = props.state.account_list.length > 0 ? props.state.account_list[0].balance.accountBalance : 0;
-      // let placeholderPrice = props.state.account_list.length > 0 ? props.state.prices.bank : "add some accounts";
+      render(){
+        if(this.props.state.account_list.length > 0) {
+          return (
+            <div className="col-md-6">
+              <form className="trForm ssForm" onSubmit={this.handleSubmit}>
+                <h5>Self Swap your own tokens @ market</h5>
 
+                <h4 className="swapTitle">I want to change my <span id="outName">{"BANK"}</span> to <span id="inName">{"ETH"}</span></h4>
+                <div className="swapBoxContainer">
+                  <div className="swapBox">
+                    <div className="row">
+                      <div className="col">
+                        <select id="currencyOut" name="currencyOut" defaultValue="lime" onChange={this.handleChange}>
+                        <option value="">...</option>
+                        { this.props.state.account_list.length > 1 ? 
 
-      return (
+                          this.props.state.account_list
+                              .sort((a,b) => a.currency > b.currency ? 1 : -1)
+                              .map((account, index) => (
+                                  <option data-index={index} value={account.id} key={account.id} > 
+                                    {currencyLabelOverride(account.currency)}
+                                  </option>
+                                ))
 
-        <div className="col-md-6">
-          <form className="trForm ssForm" onSubmit={handleSubmit}>
-            <h5>Self Swap your own tokens @ market</h5>
+                            : <>
+                                <option value="grapefruit">Please Grapefruit </option>
+                                <option value="lime">Select Lime </option>
+                                <option value="coconut">An Coconut</option>
+                                <option value="mango">Account Mango</option>
+                              </>
+                        }
 
-            {/*<div className="row">
-              <label htmlFor="selectBS" className="col-sm-2 col-form-label col-form-label-sm">Buy/Sell:</label>
-
-              <div className="col-sm-10">
-                <select id="selectBS" name="type" defaultValue="" onChange={handleChange}>
-                  <option value="">...</option>
-                  <option value="BUY">BUY</option>
-                  <option value="SELL">SELL</option>
-                </select>
-              </div>
-            </div>*/}
-
-            <h4 className="swapTitle">I want to change my <span id="outName">{"BANK"}</span> to <span id="inName">{"ETH"}</span></h4>
-            <div className="swapBoxContainer">
-              <div className="swapBox">
-                <div className="row">
-                  <div className="col">
-                    <select id="currencyOut" name="currencyOut" defaultValue="lime" onChange={handleChange}>
-                    <option value="">...</option>
-                    { props.state.account_list.length > 1 ? 
-
-                      props.state.account_list
-                          .sort((a,b) => a.currency > b.currency ? 1 : -1)
-                          .map((account, index) => (
-                              <option data-index={index} value={account.id} key={account.id} > 
-                                {currencyLabelOverride(account.currency)}
-                              </option>
-                            ))
-
-                        : <>
-                            <option value="grapefruit">Please Grapefruit </option>
-                            <option value="lime">Select Lime </option>
-                            <option value="coconut">An Coconut</option>
-                            <option value="mango">Account Mango</option>
-                          </>
-                    }
-
-                  </select>
-                    <p className="muted">Balance: <span id="maxAvailable">0</span></p>
-                  </div>
-                  <div className="col">
-                    <div className="">
-                      <input 
-                        id="swapAmount"
-                        name="amount" 
-                        type="text" 
-                        value={inputs.amount}
-                        placeholder={0} 
-                        onChange={handleChange} 
-                      />
+                      </select>
+                        <p className="muted">Balance: <span id="maxAvailable">0</span></p>
+                      </div>
+                      <div className="col">
+                        <div className="">
+                          <input 
+                            id="swapAmount"
+                            name="amount" 
+                            type="text" 
+                            value={this.state.inputs ? this.state.inputs.amount : 0}
+                            placeholder={0} 
+                            onChange={this.handleChange} 
+                          />
+                        </div>
+                        <div
+                          className="maxBtn muted"
+                          onClick={(e) => setMax(e,this.handleChange)}
+                        >MAX</div>
+                      </div>
                     </div>
-                    <div
-                      className="maxBtn muted"
-                      onClick={(e) => setMax(e,handleChange)}
-                    >MAX</div>
+                  </div>
+                </div>
+
+                <div className="flipButtonBox"
+                  onClick={() => console.log("this should flip token currency names?")}
+                  >
+                  <img className='alertLogo' src='img/swap.png' alt='swap-logo' />
+                </div>
+
+              <div className="swapBoxContainer">
+                <div className="swapBox">
+                  <div className="row">
+                    <div className="col">
+                      <select id="currencyIn" name="currencyIn" defaultValue="lime" onChange={this.handleChange}>
+                      <option value="">...</option>
+                      { this.props.state.account_list.length > 1 ? 
+
+                        this.props.state.account_list
+                            .sort((a,b) => a.currency > b.currency ? 1 : -1)
+                            .map((account, index) => (
+                                <option data-index={index} value={account.id} key={account.id} > 
+                                  {currencyLabelOverride(account.currency)}
+                                </option>
+                              ))
+
+                          : <>
+                              <option value="grapefruit">Please Grapefruit </option>
+                              <option value="lime">Select Lime </option>
+                              <option value="coconut">An Coconut</option>
+                              <option value="mango">Account Mango</option>
+                            </>
+                      }
+
+                    </select>
+                      <p className="muted">Balance: <span id="myBalance">0</span></p>
+                    </div>
+                    <div className="col">
+                      <p id="calcAmt"><strong>RCV num</strong></p>
+                      <p className="muted textRight">TOTAL: $<span id="totalAmt">XX.YY</span></p>
+                    </div>
                   </div>
                 </div>
               </div>
+                
+                <button className="btn btn-danger" id="swapSubmit" type="submit" value="Done" >Done</button>
+                
+                <hr />
+                <h6>BUY/SELL from/to your accounts using Bcard MM.</h6>
+
+              </form>
+
+              <Modal show={this.state.show} />
+
+                <button onClick={e => {
+                          console.log(e);
+                          this.showModal();
+                        }}
+                > show Modal </button>
             </div>
-
-            <div className="flipButtonBox"
-              onClick={() => console.log("this should flip token currency names")}
-              >
-              <img className='alertLogo' src='img/swap.png' alt='swap-logo' />
-            </div>
-
-          <div className="swapBoxContainer">
-            <div className="swapBox">
-              <div className="row">
-                <div className="col">
-                  <select id="currencyIn" name="currencyIn" defaultValue="lime" onChange={handleChange}>
-                  <option value="">...</option>
-                  { props.state.account_list.length > 1 ? 
-
-                    props.state.account_list
-                        .sort((a,b) => a.currency > b.currency ? 1 : -1)
-                        .map((account, index) => (
-                            <option data-index={index} value={account.id} key={account.id} > 
-                              {currencyLabelOverride(account.currency)}
-                            </option>
-                          ))
-
-                      : <>
-                          <option value="grapefruit">Please Grapefruit </option>
-                          <option value="lime">Select Lime </option>
-                          <option value="coconut">An Coconut</option>
-                          <option value="mango">Account Mango</option>
-                        </>
-                  }
-
-                </select>
-                  <p className="muted">Balance: <span id="myBalance">0</span></p>
-                </div>
-                <div className="col">
-                  <p id="calcAmt"><strong>RCV num</strong></p>
-                  <p className="muted textRight">TOTAL: $<span id="totalAmt">XX.YY</span></p>
-                </div>
-              </div>
-            </div>
-          </div>
-            
-            <input className="btn btn-danger" id="swapSubmit" type="submit" value="Done" />
-            
-            <hr />
-            <h6>BUY/SELL from/to your accounts using Bcard MM.</h6>
-
-          </form>
-
-          {/* <Modal show={state.show} /> */}
-
-            <button onClick={e => {
-                      console.log(e);
-                      // showModal();
-                    }}
-            > show Modal </button>
-        </div>
-
-    )
-    } else {
-      // if no accounts, don't show the trade form
-      return "";
-    }
+          )
+        } else {
+          // if no accounts, don't show the trade form
+          return "";
+        }
+      }
 
     
 

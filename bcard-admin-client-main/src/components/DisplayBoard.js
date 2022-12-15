@@ -24,7 +24,7 @@ function PriceBar(props) {
         <div className="container text-center priceBoxes">
             <div className="row">
                 <div className="col top">
-                    <h4>currencyBase => {props.state.prices.base}</h4>
+                    <h4>currencyBase = {props.state.prices.base}</h4>
                 </div>
             </div>
           <div className="row">
@@ -65,11 +65,17 @@ function UserLogo(props) {
     // should return a profile logo based on input graphic
     // css style for circle crop as per figma
 
-    console.log(props.custId);      // use custId to get stored profile picture
+    // console.log(props.custId);      // use custId to get stored profile picture
+
+    let userPanel = document.getElementById('userPanel');
+
 
     return (
-        <div className="profileContainer" onClick={() => console.log("User Panel")}>
-            <img className='userLogo' src='https://via.placeholder.com/300' alt='' />
+        <div className="profileContainer" onClick={() => {
+            console.log("User Panel Toggle");
+            userPanel.classList.toggle('active');
+        }}>
+            <img className='userLogo' src='img/profile-pic.png' alt='' />
         </div>
         )
 }
@@ -81,7 +87,7 @@ function AlertButton(props) {
 
     return (
         <div className="alertContainer">
-            <img className='alertLogo' src='https://via.placeholder.com/300' alt='' />
+            <img className='alertLogo' src='img/alert.png' alt='' />
         </div>
         )
 }
@@ -90,13 +96,30 @@ function AlertButton(props) {
 function MakeButton(props) {
     return (
         <div className="buttonContainer">
-            <button className="btn btn-lg btn-danger bigBtn" onClick={props.clickAction}>
+            <button className="btn btn-lg btn-danger bigBtn buttonGradient" onClick={props.clickAction}>
                 <img src={props.img} alt={props.alt} />
                 &nbsp;
                 {props.label}
             </button>
         </div>
         )
+}
+
+function MyTools(props) {
+
+    return (
+        <div id="myTokensContainer" className="container">
+            <div id="myTokensBacker">
+                <h4>My tools</h4>
+                <select className="toolSelect" defaultValue="Bankless DAO">
+                    <option>Bankless DAO</option>
+                    <option>The DAO DAO</option>
+                </select>
+
+                <h4>Go to academy</h4>
+            </div>
+        </div>
+    )
 }
 
 export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMaster, getBalance, getCustomers, createTrade, showTrades, newBTCMaster, newBTCAccount, newWalletAddress, getEthAddress, walletAddressInfo, newWalletKey, newUSDWallet, newETHWallet, onboardExecute, newXpubAccount}) => {
@@ -135,7 +158,6 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
             <PriceBar state={state} getPrices={getPrices} />
             <div className="display-board">
                 <div>
-                    <hr />
                     <h6>
                         <AlertButton />
                         {state.custId ?
@@ -152,29 +174,36 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                         ${state.balance ? thisBalance : "[...loading...]"} <small>{state.prices.base}</small>
                     </div>
                     <div className="row">
-                        <h3 className="text-center">Assets Value <span className="hl">|</span> ${ halfBalance }</h3>
+                        <h3 className="text-center">
+                            <small className="muted avTitle">Assets Value ($)</small> 
+                            <span className="hl"> |</span> ${ halfBalance }
+                        </h3>
                     </div>
-                    <div className="row">
-                        <div className="col">
+                    <div className="buttonRow d-flex justify-content-between">
+                        {/* <div className="col"> */}
                             <MakeButton 
                                 label="Receive" 
                                 img="img/receive-arrow.png" 
                                 alt="Receive Button" 
                                 clickAction={() => console.log("Receive Button Press")}
                         />
-                        </div>
-                        <div className="col">
+                        {/* </div>
+                        <div className="col"> */}
                             <MakeButton 
                                 label="Send" 
                                 img="img/send-arrow.png" 
                                 alt="Send Button" 
                                 clickAction={() => console.log("Send Button Press")}
                             />
-                        </div>
+                        {/* </div> */}
                     </div>
                     {/* <!-- Accounts list conditinally loaded here --> **/}
                     <div className="row">
                       <Accounts state={state} hideId={true} walletAddressInfo={walletAddressInfo} />
+                    </div>
+
+                    <div className="row">
+                      <MyTools state={state} hideId={true} walletAddressInfo={walletAddressInfo} />
                     </div>
 
                     {state.acctAddress ?
@@ -254,7 +283,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
 
                 <div className="btn-container">
                     
-                    <h4>TATUM System Controls -> for {state.user.email}</h4>
+                    <h4>TATUM System Controls - for {state.user.email}</h4>
 
                     {/* user is logged in BUT not assigned a custID - ONBOARDING */}
                     {!state.custId && state.user && 
@@ -352,7 +381,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                         onClick={(e) => newUSDWallet()} 
                                         >
                                             Create New (VC_USD Wallet)
-                                    </button>  -> for {state.user.email} (if accounts=0)
+                                    </button>  - for {state.user.email} (if accounts=0)
                                 </div>
                             }
 
@@ -365,7 +394,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                         onClick={(e) => newETHWallet()} 
                                         >
                                             Create New (ETH Wallet)
-                                    </button>  -> for {state.user.email} (if accounts=1+)
+                                    </button>  - for {state.user.email} (if accounts=1+)
                                 </div>
                             }
 
@@ -377,7 +406,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                 className="btn btn-secondary"
                                 onClick={(e) => newBTCMaster()} 
                                 >
-                                    Create New (BTC Master) -> xpub, mnemonic
+                                    Create New (BTC Master) - xpub, mnemonic
                             </button>
                             <button 
                                 type="button"
@@ -385,7 +414,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                 className="btn btn-primary"
                                 onClick={(e) => newBTCAccount("BTC", "BCARD_FEES", "xpub")} 
                                 >
-                                    Create New (Account: "BTC", "BCARD_FEES", "xpub") -> accountId
+                                    Create New (Account: "BTC", "BCARD_FEES", "xpub") - accountId
                             </button>
                             
                             <button 
@@ -394,7 +423,7 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                 className="btn btn-primary"
                                 onClick={(e) => newWalletKey(0, ref.current.value)}
                                 >
-                                    Create New (PrivateKey: 0, "mnemonic ->")
+                                    Create New (PrivateKey: 0, "mnemonic -")
                             </button>
                             <textarea ref={ref} id="message" name="message" />
                             <hr />
@@ -413,9 +442,9 @@ export const DisplayBoard = ({ state, getAllUsers, getPrices, getAccount, getMas
                                 className="btn btn-primary"
                                 onClick={(e) => newXpubAccount("ETH", state.user.uid, "xpub6DbQz3y2wQHZkkw85c1JxJJeBVNqH2SpuApM5i2Ta1jeFGEebeNLJAMDEJD1uYKEaCF9JgTNPFDanJe3bccNsi4Vf99ngjLY5AVUfVtEYw2")} 
                                 >
-                                    Backend2(HC) -> 
+                                    Backend2(HC) - 
                             </button>
-                            Create New (Account: "ETH", "USER.UID", "xpub") -> accountId
+                            Create New (Account: "ETH", "USER.UID", "xpub") - accountId
                             <button 
                                 type="button"
                                 style={{marginLeft: spacing + "px"}}

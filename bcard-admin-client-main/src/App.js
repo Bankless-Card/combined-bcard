@@ -7,7 +7,8 @@ import { Users } from './components/Users'
 import { DisplayBoard } from './components/DisplayBoard'
 import CreateUser from './components/CreateUser'
 import { TradeForm } from './components/TradeForm'
-import { SwapForm } from './components/SwapForm'
+// import { SwapForm } from './components/SwapForm'
+import NewSwap from './components/NewSwap';
 import { TransferForm } from './components/TransferForm'
 import { FaucetForm } from './components/FaucetForm'
 // service return
@@ -15,43 +16,18 @@ import { getAllUsers, createUser, getAccount, getCustomers, getVC, getBalance, s
 import { getPrices } from './services/BcardApi'           // move bcard server calls here
 import { newWalletKey, newETHWallet } from './services/TatumSecured'    // highly secured private key, etc. tx here
 
-
-import { adminWhitelist } from './utils/adminWhitelist'
-
-// newXpubAccount
-
-// , getAccount, getCustomers, getVC, getBalance, createTrade, showTrades, newBTCMaster, newBTCAccount, newWalletAddress, walletAddressInfo, newWalletKey
-
 // internal utils
+import { adminWhitelist } from './utils/adminWhitelist'
 import { convertToCAD } from './utils/convertToCAD'
 
 
 // firebase AUTH
-// import Login from './components/LoginPage';
-// import Home from './components/HomePage';
-
 import { signInWithEAndP, createUserWithEAndP, logout, 
       signInWithPhoneNumber } from './services/firebase'    // packaged services
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
 // // import { getAnalytics } from "firebase/analytics";
 import { getAuth, onAuthStateChanged, RecaptchaVerifier } from "firebase/auth";
-
-// function triggerShowTrades() {
-//   // update display of ACTIVE trades in UI after account is loaded
-//   showTrades()
-//   .then(trades => {
-
-//     console.log(trades);
-//     let buyOrders = trades[0];
-//     let sellOrders = trades[1];
-
-//     console.log("THIS FUNCTION RETURN FROM CALL BCARD API FOR TRADES")
-//     return { buyOrders: buyOrders, sellOrders: sellOrders };
-
-//   });
-// }
-
 
 function orderInfo(order) {
   console.log("Take order ID and display detail w/button to CANCEL or FILL.")
@@ -523,21 +499,20 @@ class App extends Component {
 
         let custMatch;
 
-        customers.forEach(cust => {
-          // console.log(cust.externalId);
+        customers.every(cust => {
+
+          if(custMatch) {return false;}   // if customer is already set, no need to continue the search
 
           if(uid === cust.externalId) {
-            // matchFlag = true;
             console.log("USER MATCH -> setState");
             
             custMatch = cust;
-            this.setState({"custId":cust.id, baseCurrency: cust.accountingCurrency});
+            this.setState({custId:cust.id, baseCurrency: cust.accountingCurrency});
             this.getAccount(cust.id);         // next function call
-            // this.setState                  // load in the customers accounts (calls prices update here)
-
+            
           }  
 
-          if(custMatch){}   // if a match is found, then progress to load in customer account
+          return true;
 
         });
 
@@ -674,8 +649,10 @@ class App extends Component {
       this.setState(prices);
     }).then(() =>{
 
-    //then call customer accounts
-    getAccount(useAcct)
+      //console.log(useAcct);
+
+      //then call customer accounts
+      getAccount(useAcct)
         .then(account_list => {
 
 
@@ -767,6 +744,8 @@ class App extends Component {
         this.setState(prices);
       }).then(() =>{
 
+        console.log("MASTER:", useAcct);
+
         //then call customer accounts
         getAccount(useAcct)
           .then(account_list => {
@@ -812,6 +791,8 @@ class App extends Component {
     } else {
       // skip the prices update for display
       console.log(priceElapsed);
+
+      console.log("ELSE:", useAcct);
       //then call customer accounts
       getAccount(useAcct)
         .then(account_list => {
@@ -1019,7 +1000,7 @@ class App extends Component {
                 </div>
               }
 
-                <div className="current-user">  
+                <div id="userPanel" className="current-user active">  
 
                   <GetUniqueCust state={this.state} getCustomers={this.getCustomers} />
 
@@ -1144,7 +1125,9 @@ class App extends Component {
               <TradeForm state={this.state} />
               <FaucetForm state={this.state} />
               <TransferForm state={this.state} />
-              <SwapForm state={this.state} />
+              {/* <SwapForm state={this.state} /> */}
+              <hr/>
+              <NewSwap state={this.state} />
             </div>
           }
 
@@ -1172,7 +1155,7 @@ class App extends Component {
           {this.state.custId && 
             <p><strong>Click <button type="btn" onClick={ () => {} }>
               Accounts ID
-            </button> Button to Select Account for Active -> <small>display detail info in panel above</small></strong></p>
+            </button> Button to Select Account for Active - <small>display detail info in panel above</small></strong></p>
           }
 
           {this.state.balance > -1 &&     // this.state.account_list.length > 0 &&

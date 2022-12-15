@@ -3,6 +3,25 @@ import React from 'react'
 import {convertToCAD} from '../utils/convertToCAD'
 import {walletAddressInfo} from '../services/UserService'
 
+import { currencyLabelOverride } from '../utils/currencyLabelOverride';
+
+async function handleTokenClick(id){
+    let returnData = await walletAddressInfo(id);
+    console.log(returnData);
+    if(returnData[0]) {
+
+        let walletAddress = returnData[0].address
+        alert("Address is:" + walletAddress);
+        console.log("Need to setState here to set address & QR -> use return");
+        // console.log(state);
+        
+    } else {
+        alert("Submit Deposit to fund FIAT Account");
+        console.log("It's a FIAT account - likely - or no addresses created");
+    }
+}
+
+
 export const Accounts = ({state, hideId}) => {
 
     let accounts = state.account_list;
@@ -23,13 +42,13 @@ export const Accounts = ({state, hideId}) => {
         let tokenTag = "BANK";
 
         let tokenBalance = parseFloat(account.balance.availableBalance).toFixed(4).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
-        let fiatBalance = convertToCAD(account.balance.accountBalance,account.currency,state).toFixed(3).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
+        let fiatBalance = convertToCAD(account.balance.accountBalance,account.currency,state).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');;
 
         if(account.currency === "BANK"){
             // ok with defaults
         } else if(account.currency === "VC_USD"){
             tokenImg = "img/us-flag-icon.png";
-            tokenName = "US Dollar FIAT";
+            tokenName = "USD FIAT";
             tokenTag = "USD";
         } else if(account.currency === "USDC_V"){
             tokenImg = "img/usdcToken.jpeg";
@@ -48,36 +67,62 @@ export const Accounts = ({state, hideId}) => {
               <tr key={index} className={index > 1?'surplus':''}>
                   <td>
                     <div className="badgeContainer">
-                        <img className="tokenBadge" src={tokenImg} alt="BDAO" />
+                        <img 
+                            className="tokenBadge" 
+                            src={tokenImg} 
+                            alt="BDAO" 
+                            onClick={async () => handleTokenClick(account.id)}
+                            //     {
+                            //     let returnData = await walletAddressInfo(account.id);
+                            //     console.log(returnData);
+                            //     if(returnData[0]) {
+    
+                            //         let walletAddress = returnData[0].address
+                            //         alert("Address is:" + walletAddress);
+                            //         console.log("Need to setState here to set address & QR");
+                            //         console.log(state);
+                                    
+                            //     } else {
+                            //         alert("Submit Deposit to fund FIAT Account");
+                            //         console.log("It's a FIAT account - likely - or no addresses created");
+                            //     }
+                                
+                            // }} 
+                        />
                     </div>
                   </td>
                   <td className="tokenLabel" title={ state.acctAddress || "SHOW WALLET ADDRESS ON HOVER: " }>
-                  {tokenName} <span>-1.81%</span><br/>
+                  <span className="heroTitle">{tokenName}</span><br className="clearFloat" />
                   
                     <div
                       type="btn"
-                      onClick={async () => {
-                        let returnData = await walletAddressInfo(account.id);
-                        console.log(returnData);
-                        if(returnData[0]) {
-
-                            let walletAddress = returnData[0].address
-                            alert("Address is:" + walletAddress);
-                            console.log("Need to setState here to set address & QR");
-                            console.log(state);
-                            
-                        } else {
-                            alert("Submit Deposit to fund FIAT Account");
-                            console.log("It's a FIAT account - likely - or no addresses created");
-                        }
+                      onClick={() => handleTokenClick(account.id)}
                         
-                      }} >
-                      <small>{tokenTag}</small>
+                    //     async () => {
+                    //     let returnData = await walletAddressInfo(account.id);
+                    //     console.log(returnData);
+                    //     if(returnData[0]) {
+
+                    //         let walletAddress = returnData[0].address
+                    //         alert("Address is:" + walletAddress);
+                    //         console.log("Need to setState here to set address & QR");
+                    //         console.log(state);
+                            
+                    //     } else {
+                    //         alert("Submit Deposit to fund FIAT Account");
+                    //         console.log("It's a FIAT account - likely - or no addresses created");
+                    //     }
+                        
+                    //   }} 
+                      >
+                      <small className="muted">{currencyLabelOverride(tokenTag)}</small>
                     </div>
                   </td>
                   <td>
-                    {tokenBalance} <small>{account.currency}</small><br/>
-                    <span>$ { fiatBalance }</span> <small>{account.accountingCurrency}</small>
+                    <span className="heroBalance">{tokenBalance} </span>
+                    {/* <small>{currencyLabelOverride(account.currency)}</small> */}
+                    <br className="clearFloat"/>
+                    <span className="muted">$ { fiatBalance } <small>{currencyLabelOverride(account.accountingCurrency)}</small> </span><span className="dailyMove">-1.81%</span>
                   </td>
                   
               </tr>
@@ -95,6 +140,11 @@ export const Accounts = ({state, hideId}) => {
     // console.log(moreRows);
 
     function showAll(moreRows) {
+
+        console.log(moreRows);
+
+        // if moreRows conditional move to wallet page
+
         for (let row of moreRows) {
             console.log(row);
             row.classList.remove('surplus')
@@ -104,29 +154,34 @@ export const Accounts = ({state, hideId}) => {
     // moreRows.forEach(element => console.log(element))
 
     return(
-        <div className="container">
-            <h2>My Tokens</h2>
-            <table className="table" isactive={moreShow.toString()}>
-                {/*<thead>
-                <tr>
-                    <th>TokenLogo</th>
-                    <th>Info</th>
-                    <th>token & balance</th>
-                </tr>
-                </thead>*/}
-                <tbody>
-                    {tokenTable}
-                </tbody>
-                <tfoot><tr>{accounts.length > 2 &&
-                    <td colSpan="3"><hr/><br/>
-                        <button
+        <div id="myTokensContainer" className="container">
+            <div id="myTokensBacker">
+                <h4>My tokens</h4>
+                <table id="myTokens" className="table" isactive={moreShow.toString()}>
+                    {/*<thead>
+                    <tr>
+                        <th>TokenLogo</th>
+                        <th>Info</th>
+                        <th>token & balance</th>
+                    </tr>
+                    </thead>*/}
+                    <tbody>
+                        {tokenTable}
+                    </tbody>
+                    <tfoot><tr>{accounts.length > 2 &&
+                        <td colSpan="3">
+                            
+                            <div className="btn"
                             onClick={() => {
-                                showAll(moreRows)
+                                showAll(moreRows);
+                                console.log("show more, show more, see all -> wallet");
                             }}
-                        >...show more ... </button>
-                    </td>
-                }</tr></tfoot>
-            </table>
+                            ><p>See all</p></div>
+                            
+                        </td>
+                    }</tr></tfoot>
+                </table>
+            </div>
         </div>
     )
 }
