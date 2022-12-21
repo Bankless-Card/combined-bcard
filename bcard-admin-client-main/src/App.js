@@ -476,7 +476,7 @@ class App extends Component {
   getCustomers = () => {
     // console.log("This is an autorun function to get the customer list and map the CustId to the External Id used in our auth system.");
 
-    // console.log();
+    console.log("prices required here - for now");
 
     this.getPrices(this.state.baseCurrency);                            // load in the prices as unauth users do not see them
 
